@@ -1,0 +1,29 @@
+Package: MSqRobData
+Type: Package
+Title: Data used as examples in the MSqRob package
+Version: 0.1.0
+Authors@R: c(
+    person("Ludger", "Goeminne", role = c("aut"), email =
+    "ludger.goeminne@UGent.be"),
+    person("Kris", "Gevaert", role = c("ctb"), email =
+    "lieven.clement@UGent.be"),
+    person("Lieven", "Clement", role = c("aut", "cre"), email =
+    "lieven.clement@UGent.be"))
+Date: 2015-07-07
+Author: Ludger Goeminne [aut],
+    Kris Gevaert [ctb],
+    Lieven Clement [aut, cre]
+Maintainer: Lieven Clement <lieven.clement@UGent.be>
+Depends:
+    R (>= 3.0.1)
+Imports:
+    MSqRob
+Description: The MSqRobData package contains datasets that are used as examples in the MSqRob package. 
+License: LGPL (>= 3)
+Encoding: UTF-8
+LazyData: TRUE
+URL: https://github.com/ludgergoeminne/MSqRobData, http://cran.r-
+    project.org/package=MSqRobData
+BugReports: https://github.com/ludgergoeminne/MSqRob, http://pkgname.bugtracker.url
+VignetteBuilder: knitr
+RoxygenNote: 6.0.1
