@@ -1,0 +1,123 @@
+---
+title: "Francisella analysis"
+author: "Ludger Goeminne, Kris Gevaert and Lieven Clement"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+fig_caption: yes
+vignette: >
+ %\VignetteIndexEntry{MSqRob Vignette}
+ %\VignetteEngine{knitr::rmarkdown}
+ %\VignetteEncoding{UTF-8}
+---
+
+# Process the *Francisella* data with MSqRob
+
+In this file, we show you how the *Francisella* data should be processed. It can serve as a basis for your own data analysis. For each research hypothesis, we rank the proteins by significance and we make volcano plots. We also save the output to Excel. Settings can be saved optionally as well. Just adjust the parameters in the first block of code and knit the file. If you want to see an example of the same file adjusted for the CPTAC dataset, check out..... If you want to have this analysis with a lot of extra material and explanations and background on the experiments, check out our vignette at https://github.com/statOmics/MSqRob/blob/master/vignettes/MSqRob.Rmd.
+  
+```{r eval=TRUE}
+library(MSqRob)
+library(Biobase)
+library(MSnbase)
+```
+
+## Set up the experiment.
+
+Change the following parameters to customize the analysis to your experimental needs.
+
+```{r eval=TRUE}
+#Adjust only this block of code to accomodate for your particular experiment.
+
+#Where did you save your peptides.txt file?
+file_peptides_txt <- system.file("extdata/Francisella", "peptides.txt", package = "MSqRobData")
+
+#Where did you save your experimental annotation? Must be either a tab-delimited file or an Excel file.
+file_annotation <- system.file("extdata/Francisella", "label-free_Francisella_annotation.xlsx", package = "MSqRobData")
+
+#Do you want to remove only identified by site? (Requires proteinGroups.txt file)
+remove_only_site <- TRUE
+file_proteinGroups <- system.file("extdata/Francisella", "proteinGroups.txt", package = "MSqRobData")
+
+#Fixed effects
+fixed <- c("genotype")
+
+#Random effects, for label-free data, it is best to always keep "Sequence"
+random <- c("biorep","run","Sequence")
+
+#Do you want to save the model?
+save_model <- TRUE #Alternative: save_model <- FALSE
+
+#To which folder do you want to export the Excel file(s) and the saved model file (if you chose to do so)? Please do not use a trailing "/" here!
+export_folder <- "/Users/lgoeminn/Desktop"
+
+#Construct the contrast matrix L for testing on the fold changes of interest (i.e. our research hypotheses)
+L <- makeContrast(
+  contrasts=c("genotypeKO-genotypeWT"),
+  levels=c("genotypeWT","genotypeKO")
+)
+
+#Set the significance threshold (default: 5% FDR)
+FDRlevel=0.05
+```
+
+##Execute the analysis
+
+```{r eval=TRUE}
+#Import the peptides
+peptides <- read_MaxQuant(file_peptides_txt, pattern="Intensity ", remove_pattern=TRUE)
+
+#Preprocess the data
+peptides2 <- preprocess_MaxQuant(peptides, exp_annotation=file_annotation, remove_only_site=remove_only_site, file_proteinGroups=file_proteinGroups)
+
+#Convert data to a protdata object
+proteins <- MSnSet2protdata(peptides2[1:10], accession="Proteins")
+
+#Fit the models
+models <- fit.model(protdata=proteins, response="quant_value", fixed=fixed, random=random)
+
+#If you chose to save the model, save it
+if(isTRUE(save_model)){
+result_files <- list()
+result_files$proteins <- proteins
+result_files$models <- models
+result_files$levelOptions <- rownames(L)
+result_files$random <- random
+saves_MSqRob(result_files, file=file.path(export_folder,"model.RDatas"), overwrite=TRUE)
+}
+
+#Test the appropriate research hypotheses
+results <- test.contrast_adjust(models, L, level=FDRlevel, simplify=FALSE)
+
+#Save the results in an Excel file
+openxlsx::write.xlsx(results, file = file.path(export_folder,"results.xlsx"), colNames = TRUE, rowNames = TRUE)
+```
+
+##Print out the 10 most significant proteins for each research hypothesis
+
+```{r eval=TRUE}
+for(i in 1:ncol(L)){
+  print(head(results[[i]],10))
+}
+```
+
+
+##Make a volcano plot for each research hypothesis
+
+```{r eval=TRUE}
+for(i in 1:ncol(L)){
+
+  resultdata <- results[[i]]
+  resultdata$minus_log10_p <- -log10(resultdata$pval)
+  
+  resultdata <- na.omit(resultdata)
+
+    if(!all(is.na(resultdata$minus_log10_p))){
+    colBool <- resultdata$qval<FDRlevel
+    colors <- rep(NA,length(resultdata$qval))
+    colors[colBool] <- "red"
+    colors[!colBool] <- "black"
+
+    plot(resultdata$estimate, resultdata$minus_log10_p, main=names(results)[i], xlab="estimate", ylab="-log10(p)", las=1, col=colors, bty="n")
+    }
+  
+}
+```
