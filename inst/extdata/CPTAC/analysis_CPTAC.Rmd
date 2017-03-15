@@ -88,6 +88,7 @@ result_files <- list()
 result_files$proteins <- proteins
 result_files$models <- models
 result_files$levelOptions <- rownames(L)
+result_files$fixed <- fixed
 result_files$random <- random
 saves_MSqRob(result_files, file=file.path(export_folder,"model.RDatas"), overwrite=TRUE)
 }
