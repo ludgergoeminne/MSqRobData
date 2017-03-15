@@ -12,7 +12,7 @@ vignette: >
 
 # Process the *Francisella* data with MSqRob
 
-In this file, we show you how the *Francisella* data should be processed. It can serve as a basis for your own data analysis. For each research hypothesis, we rank the proteins by significance and we make volcano plots. We also save the output to Excel. Settings can be saved optionally as well. Just adjust the parameters in the first block of code and knit the file. If you want to see an example of the same file adjusted for the CPTAC dataset, check out..... If you want to have this analysis with a lot of extra material and explanations and background on the experiments, check out our vignette at https://github.com/statOmics/MSqRob/blob/master/vignettes/MSqRob.Rmd.
+In this file, we show you how the *Francisella* data should be processed. It can serve as a basis for your own data analysis. For each research hypothesis, we rank the proteins by significance and we make volcano plots. We also save the output to Excel. Settings can be saved optionally as well. Just adjust the parameters in the first block of code and knit the file. If you want to see an example of the same file adjusted for the CPTAC dataset, check out https://github.com/statOmics/MSqRobData/blob/master/inst/extdata/CPTAC/analysis_CPTAC.Rmd. If you want to have this analysis with a lot of extra material and explanations and background on the experiments, check out our vignette at https://github.com/statOmics/MSqRob/blob/master/vignettes/MSqRob.Rmd.
   
 ```{r eval=TRUE}
 library(MSqRob)
@@ -69,7 +69,7 @@ peptides <- read_MaxQuant(file_peptides_txt, pattern="Intensity ", remove_patter
 peptides2 <- preprocess_MaxQuant(peptides, exp_annotation=file_annotation, remove_only_site=remove_only_site, file_proteinGroups=file_proteinGroups)
 
 #Convert data to a protdata object
-proteins <- MSnSet2protdata(peptides2[1:10], accession="Proteins")
+proteins <- MSnSet2protdata(peptides2, accession="Proteins")
 
 #Fit the models
 models <- fit.model(protdata=proteins, response="quant_value", fixed=fixed, random=random)
@@ -80,6 +80,7 @@ result_files <- list()
 result_files$proteins <- proteins
 result_files$models <- models
 result_files$levelOptions <- rownames(L)
+result_files$fixed <- fixed
 result_files$random <- random
 saves_MSqRob(result_files, file=file.path(export_folder,"model.RDatas"), overwrite=TRUE)
 }
