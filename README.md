@@ -13,7 +13,6 @@ When MSqRob is successfully installed, just enter the following commands in RStu
 
 ~~~~
 devtools::install_github("statOmics/MSqRobData")
-library(MSqRob)
 ~~~~
 
 ## 1.2. Install MSqRobData without MSqRob
@@ -35,7 +34,6 @@ Then, call this to install `MSqRobData`:
 
 ~~~~
 devtools::install_github("statOmics/MSqRobData")
-library(MSqRob)
 ~~~~
 
 If you encounter any issues in installing MSqRobData, please let us know at https://github.com/statOmics/MSqRobData/issues/!
