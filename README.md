@@ -1,9 +1,6 @@
 # MSqRobData
 
-Data used in the examples of the MSqRob package.
-
-To install MSqRob, go to:
-https://github.com/statOmics/MSqRob/
+This package contains data used in the examples of the MSqRob package.
 
 ## 1. Install MSqRobData
 
