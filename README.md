@@ -9,7 +9,7 @@ This package contains data used in the examples of the MSqRob package.
 To install MSqRob, go to:
 https://github.com/statOmics/MSqRob/
 
-When MSqRob is successfully installed, just enter the following commands in RStudio to install `MSqRobData`:
+When MSqRob is successfully installed, just enter the following command in RStudio to install `MSqRobData`:
 
 ~~~~
 devtools::install_github("statOmics/MSqRobData")
