@@ -71,7 +71,7 @@ FDRlevel=0.05
 
 ```{r eval=TRUE}
 #Import the peptides
-peptides <- read_MaxQuant(file_peptides_txt, pattern="Intensity ", remove_pattern=TRUE)
+peptides <- import2MSnSet(file_peptides_txt, filetype="MaxQuant")
 
 #Preprocess the data
 peptides2 <- preprocess_MaxQuant(peptides, exp_annotation=file_annotation, remove_only_site=remove_only_site, file_proteinGroups=file_proteinGroups)
